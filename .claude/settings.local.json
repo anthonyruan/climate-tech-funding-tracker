@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(python:*)",
+      "Bash(chmod:*)",
+      "WebFetch(domain:techcrunch.com)",
+      "Bash(rm:*)",
+      "Bash(streamlit run:*)"
+    ],
+    "deny": []
+  }
+}
