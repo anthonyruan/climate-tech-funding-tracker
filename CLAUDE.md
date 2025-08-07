@@ -67,16 +67,22 @@ python demo_setup.py
 # (Run from within the application's Data Collection page)
 ```
 
+### Linting and Type Checking
+```bash
+# Currently no linting or type checking configured
+# Consider adding: ruff, pylint, or mypy for Python linting
+```
+
 ## Architecture Overview
 
 ### Core Data Flow
-1. **Web Scraping** (`scrapers/`) ’ Raw articles collected from TechCrunch and news sources
-2. **Entity Extraction** (`analysis/entity_extractor.py`) ’ Extract companies, amounts, investors using regex patterns
-3. **AI Classification** (`analysis/ai_classifier.py`) ’ Classify sectors and validate funding events using OpenAI GPT
-4. **Data Cleaning** (`analysis/data_cleaner.py`) ’ Standardize company names, amounts, and remove duplicates
-5. **Data Validation** (`analysis/data_validator.py`) ’ Validate data quality and completeness
-6. **Database Storage** (`src/db_operations.py`) ’ Store structured data in SQLite with proper relationships
-7. **UI Presentation** (`ui/` modules) ’ Display data through Streamlit interface
+1. **Web Scraping** (`scrapers/`) ï¿½ Raw articles collected from TechCrunch and news sources
+2. **Entity Extraction** (`analysis/entity_extractor.py`) ï¿½ Extract companies, amounts, investors using regex patterns
+3. **AI Classification** (`analysis/ai_classifier.py`) ï¿½ Classify sectors and validate funding events using OpenAI GPT
+4. **Data Cleaning** (`analysis/data_cleaner.py`) ï¿½ Standardize company names, amounts, and remove duplicates
+5. **Data Validation** (`analysis/data_validator.py`) ï¿½ Validate data quality and completeness
+6. **Database Storage** (`src/db_operations.py`) ï¿½ Store structured data in SQLite with proper relationships
+7. **UI Presentation** (`ui/` modules) ï¿½ Display data through Streamlit interface
 
 ### Database Schema Design
 - **companies**: Core company information with sector classification
