@@ -1,0 +1,158 @@
+{
+  "techcrunch_climate": {
+    "name": "TechCrunch Climate",
+    "type": "website",
+    "url": "https://techcrunch.com/category/climate/",
+    "enabled": true,
+    "scraper": "techcrunch",
+    "description": "Climate tech news and funding from TechCrunch",
+    "last_scraped": "2025-08-07 16:12:01",
+    "articles_count": 90
+  },
+  "cleantechnica_rss": {
+    "name": "CleanTechnica RSS",
+    "type": "rss",
+    "url": "https://cleantechnica.com/feed/",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Clean technology news and analysis",
+    "last_scraped": "2025-08-07 16:12:01",
+    "articles_count": 1
+  },
+  "test_source": {
+    "name": "Test Source",
+    "type": "rss",
+    "url": "https://example.com/feed",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Test RSS source",
+    "last_scraped": "2025-08-07 16:12:32",
+    "articles_count": 0
+  },
+  "green_tech_media": {
+    "name": "Green Tech Media",
+    "type": "website",
+    "url": "https://www.greentechmedia.com/",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Renewable Energy and Cleantech News",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:32",
+    "articles_count": 6,
+    "custom": true
+  },
+  "climate_policy_initiative": {
+    "name": "Climate Policy Initiative",
+    "type": "website",
+    "url": "https://www.climatepolicyinitiative.org/",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Publishes rich annual and thematic reports and datasets",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:32",
+    "articles_count": 0,
+    "custom": true
+  },
+  "trellis": {
+    "name": "Trellis",
+    "type": "website",
+    "url": "https://trellis.net/",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Custom data source",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:33",
+    "articles_count": 0,
+    "custom": true
+  },
+  "reuters_news": {
+    "name": "Reuters News",
+    "type": "rss",
+    "url": "https://www.reuters.com/business/environment/",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Reuters Environment and Climate News",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:33",
+    "articles_count": 0,
+    "custom": true
+  },
+  "reuters_environment": {
+    "name": "Reuters Environment",
+    "type": "rss",
+    "url": "https://feeds.reuters.com/reuters/environment",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Custom data source",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:33",
+    "articles_count": 0,
+    "custom": true
+  },
+  "guardian_environment": {
+    "name": "Guardian Environment",
+    "type": "rss",
+    "url": "https://www.theguardian.com/environment/rss",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Custom data source",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:34",
+    "articles_count": 0,
+    "custom": true
+  },
+  "bbc_science_&_environment": {
+    "name": "BBC Science & Environment",
+    "type": "rss",
+    "url": "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    "enabled": true,
+    "scraper": "rss",
+    "description": "Custom data source",
+    "keywords": [
+      "funding",
+      "investment",
+      "raises",
+      "million",
+      "billion"
+    ],
+    "last_scraped": "2025-08-07 16:12:34",
+    "articles_count": 0,
+    "custom": true
+  }
+}
