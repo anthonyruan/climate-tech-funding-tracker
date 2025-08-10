@@ -6,8 +6,8 @@
     "enabled": true,
     "scraper": "techcrunch",
     "description": "Climate tech news and funding from TechCrunch",
-    "last_scraped": "2025-08-08 11:23:41",
-    "articles_count": 100
+    "last_scraped": "2025-08-10 01:27:50",
+    "articles_count": 110
   },
   "cleantechnica_rss": {
     "name": "CleanTechnica RSS",
@@ -16,8 +16,8 @@
     "enabled": true,
     "scraper": "rss",
     "description": "Clean technology news and analysis",
-    "last_scraped": "2025-08-08 11:23:41",
-    "articles_count": 1
+    "last_scraped": "2025-08-10 01:27:50",
+    "articles_count": 2
   },
   "test_source": {
     "name": "Test Source",
@@ -26,7 +26,7 @@
     "enabled": true,
     "scraper": "rss",
     "description": "Test RSS source",
-    "last_scraped": "2025-08-08 11:24:41",
+    "last_scraped": "2025-08-10 01:28:51",
     "articles_count": 0
   },
   "green_tech_media": {
@@ -43,7 +43,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:42",
+    "last_scraped": "2025-08-10 01:28:51",
     "articles_count": 6,
     "custom": true
   },
@@ -61,7 +61,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:42",
+    "last_scraped": "2025-08-10 01:28:51",
     "articles_count": 0,
     "custom": true
   },
@@ -79,7 +79,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:43",
+    "last_scraped": "2025-08-10 01:28:52",
     "articles_count": 0,
     "custom": true
   },
@@ -97,7 +97,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:43",
+    "last_scraped": "2025-08-10 01:28:52",
     "articles_count": 0,
     "custom": true
   },
@@ -115,7 +115,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:43",
+    "last_scraped": "2025-08-10 01:28:52",
     "articles_count": 0,
     "custom": true
   },
@@ -133,7 +133,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:43",
+    "last_scraped": "2025-08-10 01:28:52",
     "articles_count": 0,
     "custom": true
   },
@@ -151,7 +151,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-08 11:24:43",
+    "last_scraped": "2025-08-10 01:28:53",
     "articles_count": 0,
     "custom": true
   }

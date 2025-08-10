@@ -16,6 +16,8 @@ from src.db_operations import DatabaseOperations
 from src.pipeline import FundingDataPipeline
 from ui.export import render_export_page
 from ui.source_manager import render_source_manager_page, get_enabled_sources
+from ui.styles import inject_apple_css, APPLE_COLORS, METRIC_ICONS
+from ui.components import MetricCard, ChartContainer, LayoutHelpers, generate_sample_trend_data, AppleCharts
 
 # Page configuration
 st.set_page_config(
@@ -24,6 +26,150 @@ st.set_page_config(
     layout=STREAMLIT_CONFIG['layout'],
     initial_sidebar_state=STREAMLIT_CONFIG['initial_sidebar_state']
 )
+
+# Apply Apple-style CSS
+inject_apple_css()
+
+# Add global interactive enhancements
+st.markdown("""
+<style>
+/* Environmental green button styling */
+.stButton > button {
+    background: linear-gradient(135deg, #10B981, #059669) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.5rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+    background: linear-gradient(135deg, #059669, #10B981) !important;
+}
+
+.stButton > button:active {
+    transform: translateY(0) scale(0.98) !important;
+    transition: all 0.1s ease !important;
+}
+
+/* Link button styling - Environmental theme */
+.stLinkButton > a {
+    background: #10B981 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.4rem 1rem !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.875rem !important;
+    min-width: 90px !important;
+    max-width: 120px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+.stLinkButton > a:hover {
+    background: #059669 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Center the link button container */
+.stLinkButton {
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Enhanced input styling - Environmental theme */
+.stSelectbox > div > div, .stTextInput > div > div {
+    border-radius: 12px !important;
+    border: 2px solid rgba(16, 185, 129, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.stSelectbox > div > div:focus-within, .stTextInput > div > div:focus-within {
+    border-color: #10B981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Environmental themed page background */
+.stApp {
+    background: linear-gradient(180deg, #F0FDF4 0%, #ECFDF5 100%) !important;
+}
+
+.main {
+    background: transparent !important;
+}
+
+/* Page loading animation */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.main .block-container { animation: fadeInUp 0.6s ease-out; }
+html { scroll-behavior: smooth; }
+</style>
+""", unsafe_allow_html=True)
+
+# Helper function for consistent amount formatting
+def format_amount(amount_text):
+    """Format funding amounts consistently"""
+    if not amount_text or amount_text == 'Undisclosed':
+        return amount_text
+    
+    # Clean the text
+    text = str(amount_text).replace('$', '').replace(',', '').strip()
+    
+    # Parse different formats
+    if 'billion' in text.lower():
+        try:
+            num = float(text.lower().replace('billion', '').strip())
+            return f"${num:.1f}B"
+        except:
+            pass
+    elif 'million' in text.lower():
+        try:
+            num = float(text.lower().replace('million', '').strip())
+            if num >= 1000:
+                return f"${num/1000:.1f}B"
+            else:
+                return f"${int(num)}M" if num == int(num) else f"${num:.1f}M"
+        except:
+            pass
+    elif text.upper().endswith('M'):
+        try:
+            num = float(text[:-1].strip())
+            return f"${int(num)}M" if num == int(num) else f"${num:.1f}M"
+        except:
+            pass
+    elif text.upper().endswith('B'):
+        try:
+            num = float(text[:-1].strip())
+            return f"${num:.1f}B"
+        except:
+            pass
+    else:
+        try:
+            num = float(text)
+            if num >= 1000000000:
+                return f"${num/1000000000:.1f}B"
+            elif num >= 1000000:
+                return f"${int(num/1000000)}M" if (num/1000000) == int(num/1000000) else f"${num/1000000:.1f}M"
+            else:
+                return amount_text
+        except:
+            pass
+    
+    return amount_text
 
 # Initialize session state
 if 'db' not in st.session_state:
@@ -34,57 +180,227 @@ if 'pipeline' not in st.session_state:
 
 def main():
     """Main application"""
-    st.title("🌱 Climate Tech Funding Tracker")
-    st.markdown("Track climate technology startup funding in real-time")
+    # Environmental green style header
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%);
+        padding: 2.5rem 0;
+        margin: 0 0 2rem 0;
+        text-align: center;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+    ">
+        <h1 style="
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.03em;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        ">
+            🌍 APR Climate Tech Funding
+        </h1>
+        <p style="
+            color: rgba(255, 255, 255, 0.95);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            font-size: 1.15rem;
+            margin: 0.75rem 0 0 0;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+        ">Investing in a sustainable future through climate innovation</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Sidebar
+    # Sidebar with Apple-style navigation
     with st.sidebar:
-        st.header("Navigation")
-        page = st.radio(
-            "Choose a page:",
-            ["Dashboard", "Search & Filter", "Analytics", "Data Collection", "Data Export", "Data Sources"]
-        )
+        st.markdown("""
+        <div style="
+            text-align: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        ">
+            <div style="
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1C1C1E;
+                margin-bottom: 0.5rem;
+            ">Navigation</div>
+            <div style="
+                font-size: 0.875rem;
+                color: #8E8E93;
+            ">Choose your view</div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        st.divider()
+        # Modern navigation with icons
+        nav_options = [
+            ("📊", "Dashboard", "Overview of latest funding activity"),
+            ("🔍", "Search & Filter", "Find specific companies and deals"),
+            ("📈", "Analytics", "Deep insights and trends"),
+            ("🔄", "Data Collection", "Manage data sources"),
+            ("📤", "Data Export", "Export and share data"),
+            ("📡", "Data Sources", "Configure data sources")
+        ]
         
-        # System status
-        st.header("System Status")
+        page = None
+        for icon, title, desc in nav_options:
+            if st.button(
+                f"{icon} {title}",
+                key=f"nav_{title}",
+                help=desc,
+                use_container_width=True
+            ):
+                page = title
         
-        # Database status
+        # If no button is clicked, default to Dashboard
+        if page is None:
+            page = "Dashboard"
+        
+        st.markdown("""
+        <div style="
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        ">
+            <div style="
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1C1C1E;
+                margin-bottom: 1rem;
+                text-align: center;
+            ">⚡ System Status</div>
+        """, unsafe_allow_html=True)
+        
+        # Database status with modern styling
         try:
             recent_count = len(st.session_state.db.get_recent_funding_events(limit=1))
-            st.success(f"📊 Database: Connected")
-            
             total_events = st.session_state.db.get_recent_funding_events(limit=1000)
-            st.info(f"📈 Total Events: {len(total_events)}")
+            
+            st.markdown(f"""
+            <div style="
+                background: rgba(16, 185, 129, 0.1);
+                border-left: 4px solid #10B981;
+                padding: 0.75rem 1rem;
+                margin: 0.5rem 0;
+                border-radius: 0 8px 8px 0;
+            ">
+                <div style="font-weight: 600; color: #059669;">🌱 Database Connected</div>
+                <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">Events: {len(total_events):,}</div>
+            </div>
+            """, unsafe_allow_html=True)
         except Exception as e:
-            st.error(f"❌ Database Error: {str(e)}")
+            st.markdown(f"""
+            <div style="
+                background: rgba(255, 59, 48, 0.1);
+                border-left: 4px solid #FF3B30;
+                padding: 0.75rem 1rem;
+                margin: 0.5rem 0;
+                border-radius: 0 8px 8px 0;
+            ">
+                <div style="font-weight: 600; color: #FF3B30;">❌ Database Error</div>
+                <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">{str(e)[:50]}...</div>
+            </div>
+            """, unsafe_allow_html=True)
         
         # AI features status
         if OPENAI_API_KEY:
-            st.success("🤖 AI Features: Enabled")
+            st.markdown("""
+                <div style="
+                    background: rgba(0, 122, 255, 0.1);
+                    border-left: 4px solid #007AFF;
+                    padding: 0.75rem 1rem;
+                    margin: 0.5rem 0;
+                    border-radius: 0 8px 8px 0;
+                ">
+                    <div style="font-weight: 600; color: #007AFF;">🤖 AI Features Enabled</div>
+                    <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">Smart analysis active</div>
+                </div>
+                """, unsafe_allow_html=True)
         else:
-            st.warning("🤖 AI Features: Disabled (No API Key)")
+            st.markdown("""
+                <div style="
+                    background: rgba(255, 159, 10, 0.1);
+                    border-left: 4px solid #FF9F0A;
+                    padding: 0.75rem 1rem;
+                    margin: 0.5rem 0;
+                    border-radius: 0 8px 8px 0;
+                ">
+                    <div style="font-weight: 600; color: #FF9F0A;">🤖 AI Features Disabled</div>
+                    <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">API key required</div>
+                </div>
+                """, unsafe_allow_html=True)
         
         # Data sources status
         try:
             enabled_sources = get_enabled_sources()
             total_sources_count = len(enabled_sources)
             if total_sources_count > 0:
-                st.info(f"📡 Active Sources: {total_sources_count}")
+                st.markdown(f"""
+                <div style="
+                    background: rgba(52, 199, 89, 0.1);
+                    border-left: 4px solid #34C759;
+                    padding: 0.75rem 1rem;
+                    margin: 0.5rem 0;
+                    border-radius: 0 8px 8px 0;
+                ">
+                    <div style="font-weight: 600; color: #34C759;">📡 Active Sources</div>
+                    <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">{total_sources_count} sources enabled</div>
+                </div>
+                """, unsafe_allow_html=True)
             else:
-                st.warning("📡 Active Sources: 0 (No sources enabled)")
+                st.markdown("""
+                <div style="
+                    background: rgba(255, 159, 10, 0.1);
+                    border-left: 4px solid #FF9F0A;
+                    padding: 0.75rem 1rem;
+                    margin: 0.5rem 0;
+                    border-radius: 0 8px 8px 0;
+                ">
+                    <div style="font-weight: 600; color: #FF9F0A;">📡 No Active Sources</div>
+                    <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">Configure sources first</div>
+                </div>
+                """, unsafe_allow_html=True)
         except Exception as e:
-            st.error(f"❌ Sources Error: {str(e)}")
-            
-        st.divider()
+            st.markdown(f"""
+            <div style="
+                background: rgba(255, 59, 48, 0.1);
+                border-left: 4px solid #FF3B30;
+                padding: 0.75rem 1rem;
+                margin: 0.5rem 0;
+                border-radius: 0 8px 8px 0;
+            ">
+                <div style="font-weight: 600; color: #FF3B30;">❌ Sources Error</div>
+                <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">{str(e)[:50]}...</div>
+            </div>
+            """, unsafe_allow_html=True)
         
-        # Quick actions
-        st.header("Quick Actions")
+        # Quick actions with Apple-style buttons
+        st.markdown("""
+        <div style="
+            text-align: center;
+            margin-top: 2rem;
+        ">
+            <div style="
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1C1C1E;
+                margin-bottom: 1rem;
+            ">🚀 Quick Actions</div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        if st.button("🔄 Refresh Data", type="primary"):
+        if st.button(
+            "🔄 Refresh Data",
+            type="primary",
+            use_container_width=True,
+            help="Collect latest funding news from configured sources"
+        ):
             try:
-                with st.spinner("Scraping latest funding news..."):
+                with st.spinner("🔄 Collecting latest funding news..."):
                     results = st.session_state.pipeline.run_scraping_cycle(max_pages=1)
                     if results:
                         st.success(f"✅ Added {len(results)} new funding events!")
@@ -92,7 +408,7 @@ def main():
                     else:
                         st.info("ℹ️ No new funding events found")
             except Exception as e:
-                st.error(f"Error during data refresh: {str(e)}")
+                st.error(f"❌ Error: {str(e)}")
     
     # Main content based on selected page
     if page == "Dashboard":
@@ -110,73 +426,177 @@ def main():
 
 def show_dashboard():
     """Dashboard page showing recent funding events"""
-    st.header("📊 Recent Funding Events")
+    # Environmental themed dashboard header
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    ">
+        <h2 style="
+            color: #059669;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        ">🌿 Funding Dashboard</h2>
+        <p style="
+            color: #6B7280;
+            font-size: 1rem;
+            margin: 0;
+        ">Real-time insights into climate tech funding activity</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Get recent events
     try:
-        events = st.session_state.db.get_recent_funding_events(limit=20)
+        events = st.session_state.db.get_recent_funding_events(limit=1000)  # Get all events for metrics
         
         if not events:
             st.info("No funding events found. Try refreshing the data using the sidebar.")
             return
         
-        # Summary metrics
-        col1, col2, col3, col4 = st.columns(4)
+        # Apple-style metrics using custom components
+        total_amount = sum(event['amount'] or 0 for event in events)
+        stages = [event['funding_stage'] for event in events if event['funding_stage']]
+        sectors = [event['company_sector'] for event in events if event['company_sector']]
+        most_common_stage = max(set(stages), key=stages.count) if stages else "N/A"
+        most_common_sector = max(set(sectors), key=sectors.count) if sectors else "N/A"
         
-        with col1:
-            st.metric("Total Events", len(events))
+        metrics = [
+            {
+                'title': 'Total Events',
+                'value': f"{len(events):,}",
+                'icon': METRIC_ICONS['events'],
+                'color_theme': 'blue'
+            },
+            {
+                'title': 'Total Funding',
+                'value': f"${total_amount/1e9:.1f}B" if total_amount > 1e9 else f"${total_amount/1e6:.1f}M",
+                'icon': METRIC_ICONS['funding'],
+                'color_theme': 'green'
+            },
+            {
+                'title': 'Popular Stage',
+                'value': most_common_stage[:12] + '...' if len(most_common_stage) > 12 else most_common_stage,
+                'icon': METRIC_ICONS['deals'],
+                'color_theme': 'orange'
+            },
+            {
+                'title': 'Top Sector',
+                'value': most_common_sector[:12] + '...' if len(most_common_sector) > 12 else most_common_sector,
+                'icon': METRIC_ICONS['sectors'],
+                'color_theme': 'purple'
+            }
+        ]
         
-        with col2:
-            total_amount = sum(event['amount'] or 0 for event in events)
-            st.metric("Total Funding", f"${total_amount/1e9:.1f}B" if total_amount > 1e9 else f"${total_amount/1e6:.1f}M")
+        LayoutHelpers.create_metric_row(metrics)
         
-        with col3:
-            stages = [event['funding_stage'] for event in events if event['funding_stage']]
-            most_common_stage = max(set(stages), key=stages.count) if stages else "N/A"
-            st.metric("Popular Stage", most_common_stage)
+        st.markdown("""
+        <div style="
+            height: 2rem;
+            background: linear-gradient(90deg, transparent, rgba(0, 122, 255, 0.2), transparent);
+            margin: 2rem 0;
+        "></div>
+        """, unsafe_allow_html=True)
         
-        with col4:
-            sectors = [event['company_sector'] for event in events if event['company_sector']]
-            most_common_sector = max(set(sectors), key=sectors.count) if sectors else "N/A"
-            st.metric("Top Sector", most_common_sector)
+        # Modern events display
+        st.markdown("""
+        <div style="
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        ">Latest Funding Events</div>
+        """, unsafe_allow_html=True)
         
-        st.divider()
+        # Display events in clean Apple-style list
+        events_to_show = events[:8]  # Show only first 8 for display
         
-        # Events table
-        for event in events:
-            with st.expander(f"💰 {event['company_name']} - {event['amount_text'] or 'Undisclosed Amount'}"):
-                col1, col2 = st.columns([2, 1])
+        for i, event in enumerate(events_to_show):
+            # Extract data
+            amount_display = format_amount(event.get('amount_text', 'Undisclosed'))
+            sector = event.get('company_sector', 'Unknown')
+            stage = event.get('funding_stage', 'Unknown')
+            location = event.get('company_location', '')
+            
+            # Clean summary
+            summary = ""
+            if event.get('summary'):
+                import re
+                summary = re.sub(r'<[^>]+>', '', event['summary'][:100])
+                if len(event['summary']) > 100:
+                    summary += "..."
+            
+            # Investors
+            investors = "Investors TBA"
+            if event.get('investors'):
+                if len(event['investors']) == 1:
+                    investors = event['investors'][0]['name']
+                else:
+                    investors = f"{event['investors'][0]['name']} +{len(event['investors'])-1} more"
+            
+            # Create container for the row
+            container = st.container()
+            with container:
+                col1, col2, col3 = st.columns([3, 2, 1])
                 
                 with col1:
-                    st.write(f"**Company:** {event['company_name']}")
-                    if event['company_sector']:
-                        st.write(f"**Sector:** {event['company_sector']}")
-                    if event['company_location']:
-                        st.write(f"**Location:** {event['company_location']}")
-                    if event['funding_stage']:
-                        st.write(f"**Stage:** {event['funding_stage']}")
-                    if event['summary']:
-                        st.write(f"**Summary:** {event['summary']}")
+                    st.markdown(f"### {event['company_name']}")
+                    if summary:
+                        st.markdown(summary)
+                    
+                    # Tags
+                    tag_text = f"🏢 {sector}"
+                    if stage != 'Unknown':
+                        tag_text += f" • 📈 {stage}"
+                    if location:
+                        tag_text += f" • 📍 {location}"
+                    st.markdown(f"*{tag_text}*")
                 
                 with col2:
-                    if event['announcement_date']:
-                        st.write(f"**Date:** {event['announcement_date']}")
-                    if event['source_url']:
-                        st.markdown(f"[📰 Read Article]({event['source_url']})")
+                    st.markdown(f"### 💰 {amount_display}")
+                    st.markdown(f"👥 {investors}")
                 
-                # Show investors
-                if event.get('investors'):
-                    st.write("**Investors:**")
-                    for investor in event['investors']:
-                        role = " (Lead)" if investor.get('is_lead_investor') else ""
-                        st.write(f"• {investor['name']}{role}")
+                with col3:
+                    if event.get('source_url'):
+                        st.link_button("Read More", event['source_url'])
+                    else:
+                        st.button("Details", disabled=True)
+                
+                # Add separator
+                if i < len(events_to_show) - 1:
+                    st.divider()
                 
     except Exception as e:
         st.error(f"Error loading dashboard: {str(e)}")
 
 def show_search():
     """Search and filter page"""
-    st.header("🔍 Search & Filter Funding Events")
+    # Modern search page header
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, rgba(175, 82, 222, 0.1) 0%, rgba(255, 45, 146, 0.1) 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(175, 82, 222, 0.2);
+    ">
+        <h2 style="
+            color: #AF52DE;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        ">🔍 Smart Search & Filters</h2>
+        <p style="
+            color: #8E8E93;
+            font-size: 1rem;
+            margin: 0;
+        ">Find specific companies, deals, and trends with precision</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Search form
     with st.form("search_form"):
@@ -247,7 +667,28 @@ def show_search():
 
 def show_analytics():
     """Analytics page with charts and insights"""
-    st.header("📈 Analytics & Insights")
+    # Modern analytics header
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(48, 209, 88, 0.1) 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(52, 199, 89, 0.2);
+    ">
+        <h2 style="
+            color: #34C759;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        ">📈 Analytics & Market Insights</h2>
+        <p style="
+            color: #8E8E93;
+            font-size: 1rem;
+            margin: 0;
+        ">Deep dive into funding trends and market intelligence</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     try:
         # Get analytics data
@@ -258,51 +699,177 @@ def show_analytics():
             st.info("No data available for analytics. Try collecting some data first.")
             return
         
+        # Modern charts section
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("💰 Funding by Sector")
             if sector_data:
-                # Create sector chart data
-                sectors = [item['sector'] for item in sector_data]
-                amounts = [item['total_amount']/1e6 for item in sector_data]  # Convert to millions
+                # Prepare data for donut chart
+                chart_data = [{
+                    'sector': item['sector'][:15] + '...' if len(item['sector']) > 15 else item['sector'],
+                    'amount': item['total_amount']
+                } for item in sector_data[:8]]  # Top 8 sectors
                 
-                chart_data = pd.DataFrame({
-                    'Sector': sectors,
-                    'Total Funding ($M)': amounts
-                })
-                
-                st.bar_chart(chart_data.set_index('Sector'))
+                ChartContainer.render(
+                    title="🏢 Funding by Sector",
+                    chart_func=lambda: st.plotly_chart(
+                        AppleCharts.create_donut_chart(
+                            data=chart_data,
+                            values_key='amount',
+                            names_key='sector',
+                            show_center_total=True
+                        ),
+                        use_container_width=True,
+                        config={'displayModeBar': False}
+                    ),
+                    subtitle="Distribution of funding across climate sectors"
+                )
         
         with col2:
-            st.subheader("🏆 Top Investors")
             if top_investors:
-                for i, investor in enumerate(top_investors[:5], 1):
-                    st.write(f"{i}. **{investor['name']}** - {investor['investment_count']} investments ({investor['lead_count']} as lead)")
+                # Modern investor display
+                st.markdown("""
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                    border: 1px solid rgba(0, 0, 0, 0.05);
+                    margin-bottom: 20px;
+                ">
+                    <h3 style="
+                        color: #1C1C1E;
+                        font-size: 1.125rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        display: flex;
+                        align-items: center;
+                    ">
+                        🏆 Top Active Investors
+                    </h3>
+                """, unsafe_allow_html=True)
+                
+                for i, investor in enumerate(top_investors[:6], 1):
+                    # Create a modern investor card
+                    lead_pct = (investor['lead_count'] / investor['investment_count'] * 100) if investor['investment_count'] > 0 else 0
+                    
+                    st.markdown(f"""
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 0.75rem;
+                        margin: 0.5rem 0;
+                        background: rgba(0, 122, 255, 0.05);
+                        border-radius: 8px;
+                        border-left: 3px solid #007AFF;
+                    ">
+                        <div style="flex: 1;">
+                            <div style="
+                                font-weight: 600;
+                                color: #1C1C1E;
+                                font-size: 0.95rem;
+                                margin-bottom: 0.25rem;
+                            ">{investor['name'][:25]}{'...' if len(investor['name']) > 25 else ''}</div>
+                            <div style="
+                                font-size: 0.8rem;
+                                color: #8E8E93;
+                            ">
+                                {investor['investment_count']} investments • {lead_pct:.0f}% lead
+                            </div>
+                        </div>
+                        <div style="
+                            background: #007AFF;
+                            color: white;
+                            border-radius: 50%;
+                            width: 24px;
+                            height: 24px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                        ">#{i}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                st.markdown("</div>", unsafe_allow_html=True)
         
-        # Additional insights
-        st.divider()
-        st.subheader("📊 Summary Statistics")
+        # Enhanced summary statistics
+        st.markdown("""
+        <div style="
+            height: 2rem;
+            background: linear-gradient(90deg, transparent, rgba(52, 199, 89, 0.2), transparent);
+            margin: 2rem 0;
+        "></div>
+        """, unsafe_allow_html=True)
         
         if sector_data:
             total_funding = sum(item['total_amount'] for item in sector_data)
             total_events = sum(item['event_count'] for item in sector_data)
             avg_deal_size = total_funding / total_events if total_events > 0 else 0
             
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Total Tracked Funding", f"${total_funding/1e9:.1f}B")
-            with col2:
-                st.metric("Total Funding Events", f"{total_events:,}")
-            with col3:
-                st.metric("Average Deal Size", f"${avg_deal_size/1e6:.1f}M")
+            # Generate sample trend data
+            funding_current, funding_prev = generate_sample_trend_data(total_funding)
+            events_current, events_prev = generate_sample_trend_data(total_events)
+            deal_current, deal_prev = generate_sample_trend_data(avg_deal_size)
+            
+            summary_metrics = [
+                {
+                    'title': 'Total Tracked Funding',
+                    'value': format_large_number(total_funding),
+                    'icon': METRIC_ICONS['funding'],
+                    'color_theme': 'green',
+                    'trend_value': funding_current,
+                    'trend_comparison': funding_prev
+                },
+                {
+                    'title': 'Total Funding Events',
+                    'value': f"{total_events:,}",
+                    'icon': METRIC_ICONS['events'],
+                    'color_theme': 'blue',
+                    'trend_value': events_current,
+                    'trend_comparison': events_prev
+                },
+                {
+                    'title': 'Average Deal Size',
+                    'value': format_large_number(avg_deal_size),
+                    'icon': METRIC_ICONS['deals'],
+                    'color_theme': 'orange',
+                    'trend_value': deal_current,
+                    'trend_comparison': deal_prev
+                }
+            ]
+            
+            LayoutHelpers.create_metric_row(summary_metrics, columns=3)
     
     except Exception as e:
         st.error(f"Analytics error: {str(e)}")
 
 def show_data_collection():
     """Data collection and management page"""
-    st.header("🔄 Data Collection")
+    # Modern data collection header
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, rgba(255, 159, 10, 0.1) 0%, rgba(255, 149, 0, 0.1) 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 159, 10, 0.2);
+    ">
+        <h2 style="
+            color: #FF9F0A;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        ">🔄 Data Collection Center</h2>
+        <p style="
+            color: #8E8E93;
+            font-size: 1rem;
+            margin: 0;
+        ">Manage data sources and collection pipeline</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     This page allows you to manually trigger data collection and view the processing pipeline status.
