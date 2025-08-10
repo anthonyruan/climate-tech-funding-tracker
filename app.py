@@ -239,19 +239,18 @@ def main():
         
         # Modern navigation without icons
         nav_options = [
-            ("", "Dashboard", "Overview of latest funding activity"),
-            ("", "Search & Filter", "Find specific companies and deals"),
-            ("", "Analytics", "Deep insights and trends"),
-            ("", "Data Collection", "Manage data sources"),
-            ("", "Data Export", "Export and share data"),
-            ("", "Data Sources", "Configure data sources")
+            "Dashboard",
+            "Search & Filter", 
+            "Analytics",
+            "Data Collection",
+            "Data Export",
+            "Data Sources"
         ]
         
-        for icon, title, desc in nav_options:
+        for title in nav_options:
             if st.button(
                 title,
                 key=f"nav_{title}",
-                help=desc,
                 use_container_width=True
             ):
                 st.session_state.current_page = title
