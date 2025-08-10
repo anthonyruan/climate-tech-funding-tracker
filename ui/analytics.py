@@ -16,6 +16,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.db_operations import DatabaseOperations
+from ui.styles import format_large_number
 
 def render_analytics_page(db: DatabaseOperations):
     """Render the analytics and insights page"""

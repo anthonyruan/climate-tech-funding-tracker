@@ -185,7 +185,7 @@ def inject_apple_css():
     
     .metric-title {{
         color: var(--text-secondary);
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 500;
         margin: 0;
         text-transform: uppercase;
@@ -193,14 +193,14 @@ def inject_apple_css():
     }}
     
     .metric-icon {{
-        font-size: 24px;
+        font-size: 28px;
         padding: 8px;
         border-radius: 8px;
         background: rgba(0, 122, 255, 0.1);
     }}
     
     .metric-value {{
-        font-size: 36px;
+        font-size: 42px;
         font-weight: 700;
         color: var(--text-primary);
         margin: 8px 0;
@@ -210,7 +210,7 @@ def inject_apple_css():
     .metric-change {{
         display: flex;
         align-items: center;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 500;
         margin-top: 8px;
     }}
@@ -238,7 +238,7 @@ def inject_apple_css():
     }}
     
     .chart-title {{
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 600;
         color: var(--text-primary);
         margin-bottom: 16px;
@@ -266,7 +266,7 @@ def inject_apple_css():
     }}
     
     .section-title {{
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 700;
         color: var(--text-primary);
         margin: 0 0 8px 0;
@@ -274,7 +274,7 @@ def inject_apple_css():
     
     .section-subtitle {{
         color: var(--text-secondary);
-        font-size: 16px;
+        font-size: 18px;
         margin: 0;
     }}
     
@@ -290,11 +290,17 @@ def inject_apple_css():
         color: white !important;
         border: none !important;
         border-radius: 8px !important;
-        padding: 12px 24px !important;
+        padding: 12px 16px !important;
         font-weight: 500 !important;
-        font-size: 14px !important;
+        font-size: 16px !important;
         transition: var(--transition) !important;
         box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3) !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }}
     
     .stButton > button:hover {{
@@ -303,12 +309,26 @@ def inject_apple_css():
         box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4) !important;
     }}
     
+    /* Secondary button styling */
+    .stButton > button[kind="secondary"] {{
+        background: rgba(142, 142, 147, 0.12) !important;
+        color: var(--text-primary) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }}
+    
+    .stButton > button[kind="secondary"]:hover {{
+        background: rgba(142, 142, 147, 0.2) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }}
+    
     /* Tabs styling */
     .stTabs [data-baseweb="tab-list"] {{
-        background: var(--bg-secondary);
+        background: linear-gradient(135deg, rgba(245, 247, 250, 0.8) 0%, rgba(195, 207, 226, 0.8) 100%);
         border-radius: var(--border-radius);
         padding: 4px;
         margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }}
     
     .stTabs [data-baseweb="tab"] {{
@@ -320,10 +340,16 @@ def inject_apple_css():
         transition: var(--transition);
     }}
     
+    .stTabs [data-baseweb="tab"]:hover:not([aria-selected="true"]) {{
+        background: rgba(255, 255, 255, 0.5) !important;
+        color: var(--text-primary) !important;
+    }}
+    
     .stTabs [aria-selected="true"] {{
-        background: var(--surface) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
         color: var(--primary-blue) !important;
-        box-shadow: var(--shadow-light) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
     }}
     
     /* Dataframe styling */
@@ -364,20 +390,20 @@ def inject_apple_css():
     .insight-title {{
         color: var(--text-primary);
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
         margin-bottom: 8px;
     }}
     
     .insight-value {{
         color: var(--primary-green);
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 700;
         margin-bottom: 4px;
     }}
     
     .insight-description {{
         color: var(--text-secondary);
-        font-size: 14px;
+        font-size: 18px;
     }}
     
     /* Responsive design */
@@ -387,7 +413,7 @@ def inject_apple_css():
         }}
         
         .metric-value {{
-            font-size: 28px;
+            font-size: 32px;
         }}
         
         .chart-container {{
@@ -424,6 +450,96 @@ def inject_apple_css():
         background: linear-gradient(135deg, rgba(255, 69, 58, 0.1), rgba(255, 69, 58, 0.05));
         border-left: 4px solid var(--error);
     }}
+    
+    /* Enhanced source cards */
+    .source-card {{
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 251, 0.95) 100%);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition: var(--transition);
+    }}
+    
+    .source-card:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }}
+    
+    /* Form improvements */
+    .stForm {{
+        background: var(--surface) !important;
+        border-radius: var(--border-radius) !important;
+        padding: 24px !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: var(--shadow-sm) !important;
+    }}
+    
+    /* Enhanced text inputs */
+    .stTextInput > div > div > input {{
+        border-radius: 8px !important;
+        border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+        transition: var(--transition) !important;
+    }}
+    
+    .stTextInput > div > div > input:focus {{
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1) !important;
+    }}
+    
+    /* Enhanced selectbox */
+    .stSelectbox > div > div > div {{
+        border-radius: 8px !important;
+        border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+        font-size: 16px !important;
+    }}
+    
+    /* Enhanced text area */
+    .stTextArea > div > div > textarea {{
+        border-radius: 8px !important;
+        border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+        transition: var(--transition) !important;
+    }}
+    
+    .stTextArea > div > div > textarea:focus {{
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1) !important;
+    }}
+    
+    /* Source manager specific button styling */
+    div[data-testid="column"] .stButton > button {{
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+    }}
+    
+    /* Delete button special styling */
+    .stButton > button:has-text("Delete") {{
+        background: rgba(255, 69, 58, 0.1) !important;
+        color: #FF453A !important;
+        border: 1px solid rgba(255, 69, 58, 0.2) !important;
+    }}
+    
+    .stButton > button:has-text("Delete"):hover {{
+        background: rgba(255, 69, 58, 0.15) !important;
+        border: 1px solid rgba(255, 69, 58, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }}
+    
+    /* Confirmation button styling */
+    .stButton > button:has-text("Yes, Delete") {{
+        background: #FF453A !important;
+        color: white !important;
+    }}
+    
+    .stButton > button:has-text("Yes, Delete"):hover {{
+        background: #D70015 !important;
+    }}
     </style>
     """
     
@@ -434,16 +550,18 @@ def get_sector_color(sector: str) -> str:
     sector_lower = sector.lower().replace(' ', '_').replace('&', '').replace('-', '_')
     return CLIMATE_COLORS.get(sector_lower, APPLE_COLORS['medium_gray'])
 
-def format_large_number(number: float) -> str:
+def format_large_number(number: float, currency: bool = True) -> str:
     """Format large numbers in Apple style (25, $690.7B, etc.)"""
+    prefix = "$" if currency else ""
+    
     if number >= 1_000_000_000:
-        return f"${number/1_000_000_000:.1f}B"
+        return f"{prefix}{number/1_000_000_000:.1f}B"
     elif number >= 1_000_000:
-        return f"${number/1_000_000:.1f}M"
+        return f"{prefix}{number/1_000_000:.1f}M"
     elif number >= 1_000:
-        return f"${number/1_000:.1f}K"
+        return f"{prefix}{number/1_000:.1f}K"
     else:
-        return f"{number:,.0f}"
+        return f"{prefix}{number:,.0f}" if currency else f"{number:,.0f}"
 
 def get_trend_indicator(current: float, previous: float) -> tuple:
     """Get trend indicator (direction, percentage, color)"""
@@ -467,10 +585,10 @@ CHART_THEME = {
     'grid_color': 'rgba(0, 0, 0, 0.05)',
     'text_color': APPLE_COLORS['text_primary'],
     'font_family': 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
-    'title_font_size': 18,
+    'title_font_size': 22,
     'title_font_weight': 600,
-    'axis_font_size': 12,
-    'legend_font_size': 12,
+    'axis_font_size': 14,
+    'legend_font_size': 14,
     'border_radius': 12
 }
 

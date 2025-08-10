@@ -16,7 +16,7 @@ from src.db_operations import DatabaseOperations
 from src.pipeline import FundingDataPipeline
 from ui.export import render_export_page
 from ui.source_manager import render_source_manager_page, get_enabled_sources
-from ui.styles import inject_apple_css, APPLE_COLORS, METRIC_ICONS
+from ui.styles import inject_apple_css, APPLE_COLORS, METRIC_ICONS, format_large_number
 from ui.components import MetricCard, ChartContainer, LayoutHelpers, generate_sample_trend_data, AppleCharts
 
 # Page configuration
