@@ -178,6 +178,9 @@ if 'db' not in st.session_state:
 if 'pipeline' not in st.session_state:
     st.session_state.pipeline = FundingDataPipeline()
 
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "Dashboard"
+
 def main():
     """Main application"""
     # Environmental green style header
@@ -244,7 +247,6 @@ def main():
             ("📡", "Data Sources", "Configure data sources")
         ]
         
-        page = None
         for icon, title, desc in nav_options:
             if st.button(
                 f"{icon} {title}",
@@ -252,11 +254,11 @@ def main():
                 help=desc,
                 use_container_width=True
             ):
-                page = title
+                st.session_state.current_page = title
+                st.rerun()
         
-        # If no button is clicked, default to Dashboard
-        if page is None:
-            page = "Dashboard"
+        # Get current page from session state
+        page = st.session_state.current_page
         
         st.markdown("""
         <div style="
@@ -575,25 +577,27 @@ def show_dashboard():
 
 def show_search():
     """Search and filter page"""
-    # Modern search page header
+    # Environmental themed search page header
     st.markdown("""
     <div style="
-        background: linear-gradient(135deg, rgba(175, 82, 222, 0.1) 0%, rgba(255, 45, 146, 0.1) 100%);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
         border-radius: 16px;
         padding: 1.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(175, 82, 222, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.2);
     ">
         <h2 style="
-            color: #AF52DE;
+            color: #059669;
             font-size: 1.75rem;
             font-weight: 700;
             margin: 0 0 0.5rem 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
         ">🔍 Smart Search & Filters</h2>
         <p style="
-            color: #8E8E93;
+            color: #6B7280;
             font-size: 1rem;
             margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
         ">Find specific companies, deals, and trends with precision</p>
     </div>
     """, unsafe_allow_html=True)
@@ -644,26 +648,132 @@ def show_search():
                 max_amount=max_amount_val
             )
             
-            st.write(f"Found {len(results)} matching funding events")
+            # Results header
+            st.markdown(f"""
+            <div style="
+                background: #FFFFFF;
+                border-radius: 16px;
+                padding: 1rem 1.5rem;
+                margin: 2rem 0 1.5rem 0;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(16, 185, 129, 0.2);
+            ">
+                <h3 style="
+                    color: #059669;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    margin: 0;
+                    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+                ">
+                    ✅ Found {len(results)} matching funding events
+                </h3>
+            </div>
+            """, unsafe_allow_html=True)
             
             if results:
-                # Create DataFrame for better display
-                df_data = []
-                for event in results:
-                    df_data.append({
-                        'Company': event['company_name'],
-                        'Amount': event['amount_text'] or 'Undisclosed',
-                        'Stage': event['funding_stage'] or 'Unknown',
-                        'Sector': event['company_sector'] or 'Unknown',
-                        'Location': event['company_location'] or 'Unknown',
-                        'Date': event['announcement_date'] or 'Unknown'
-                    })
-                
-                df = pd.DataFrame(df_data)
-                st.dataframe(df, use_container_width=True)
+                # Display results in the same style as Dashboard
+                for i, event in enumerate(results[:20]):  # Limit to 20 results
+                    # Extract and format data
+                    amount_display = format_amount(event.get('amount_text', 'Undisclosed'))
+                    sector = event.get('company_sector', 'Unknown')
+                    stage = event.get('funding_stage', 'Unknown')
+                    location = event.get('company_location', '')
+                    date = event.get('announcement_date', '')
+                    
+                    # Get summary
+                    summary = ""
+                    if event.get('summary'):
+                        import re
+                        summary = re.sub(r'<[^>]+>', '', event['summary'][:100])
+                        if len(event['summary']) > 100:
+                            summary += "..."
+                    
+                    # Get investors
+                    investors = "Investors TBA"
+                    if event.get('investors'):
+                        if len(event['investors']) == 1:
+                            investors = event['investors'][0]['name']
+                        else:
+                            investors = f"{event['investors'][0]['name']} +{len(event['investors'])-1} more"
+                    
+                    # Create container for the row
+                    container = st.container()
+                    with container:
+                        col1, col2, col3 = st.columns([3, 2, 1])
+                        
+                        with col1:
+                            st.markdown(f"### {event['company_name']}")
+                            if summary:
+                                st.markdown(summary)
+                            
+                            # Tags
+                            tag_text = f"🏢 {sector}"
+                            if stage != 'Unknown':
+                                tag_text += f" • 📈 {stage}"
+                            if location:
+                                tag_text += f" • 📍 {location}"
+                            if date:
+                                tag_text += f" • 📅 {date}"
+                            st.markdown(f"*{tag_text}*")
+                        
+                        with col2:
+                            st.markdown(f"### 💰 {amount_display}")
+                            st.markdown(f"👥 {investors}")
+                        
+                        with col3:
+                            if event.get('source_url'):
+                                st.link_button("Read More", event['source_url'])
+                            else:
+                                st.button("Details", disabled=True, key=f"details_{i}")
+                        
+                        # Add separator
+                        if i < len(results) - 1 and i < 19:
+                            st.divider()
+            else:
+                st.info("No results found. Try adjusting your search criteria.")
         
         except Exception as e:
             st.error(f"Search error: {str(e)}")
+    
+    # Show recent events as examples when no search is performed
+    else:
+        st.markdown("""
+        <div style="
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 2rem 0 1.5rem 0;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        ">
+            <p style="
+                color: #059669;
+                font-size: 0.95rem;
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            ">
+                💡 <strong>Tip:</strong> Use the filters above to search for specific companies, sectors, or funding stages.
+                Below are some recent funding events to get you started.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        try:
+            # Show 5 recent events as examples
+            recent_events = st.session_state.db.get_recent_funding_events(limit=5)
+            if recent_events:
+                st.markdown("#### Recent Funding Events")
+                for event in recent_events:
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.markdown(f"**{event['company_name']}** - {event.get('company_sector', 'Unknown sector')}")
+                        st.caption(f"📍 {event.get('company_location', 'Unknown location')} • 📅 {event.get('announcement_date', 'Unknown date')}")
+                    with col2:
+                        amount = format_amount(event.get('amount_text', 'Undisclosed'))
+                        st.markdown(f"**{amount}**")
+                        st.caption(event.get('funding_stage', 'Unknown stage'))
+                    st.divider()
+        except Exception as e:
+            st.error(f"Error loading recent events: {str(e)}")
 
 def show_analytics():
     """Analytics page with charts and insights"""
