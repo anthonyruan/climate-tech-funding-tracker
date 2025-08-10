@@ -237,19 +237,19 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # Modern navigation with icons
+        # Modern navigation without icons
         nav_options = [
-            ("📊", "Dashboard", "Overview of latest funding activity"),
-            ("🔍", "Search & Filter", "Find specific companies and deals"),
-            ("📈", "Analytics", "Deep insights and trends"),
-            ("🔄", "Data Collection", "Manage data sources"),
-            ("📤", "Data Export", "Export and share data"),
-            ("📡", "Data Sources", "Configure data sources")
+            ("", "Dashboard", "Overview of latest funding activity"),
+            ("", "Search & Filter", "Find specific companies and deals"),
+            ("", "Analytics", "Deep insights and trends"),
+            ("", "Data Collection", "Manage data sources"),
+            ("", "Data Export", "Export and share data"),
+            ("", "Data Sources", "Configure data sources")
         ]
         
         for icon, title, desc in nav_options:
             if st.button(
-                f"{icon} {title}",
+                title,
                 key=f"nav_{title}",
                 help=desc,
                 use_container_width=True
@@ -349,7 +349,7 @@ def main():
                     margin: 0.5rem 0;
                     border-radius: 0 8px 8px 0;
                 ">
-                    <div style="font-weight: 600; color: #34C759;">📡 Active Sources</div>
+                    <div style="font-weight: 600; color: #34C759;">Active Sources</div>
                     <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">{total_sources_count} sources enabled</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -362,7 +362,7 @@ def main():
                     margin: 0.5rem 0;
                     border-radius: 0 8px 8px 0;
                 ">
-                    <div style="font-weight: 600; color: #FF9F0A;">📡 No Active Sources</div>
+                    <div style="font-weight: 600; color: #FF9F0A;">No Active Sources</div>
                     <div style="font-size: 0.875rem; color: #1C1C1E; margin-top: 0.25rem;">Configure sources first</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -396,7 +396,7 @@ def main():
         """, unsafe_allow_html=True)
         
         if st.button(
-            "🔄 Refresh Data",
+            "Refresh Data",
             type="primary",
             use_container_width=True,
             help="Collect latest funding news from configured sources"
@@ -442,7 +442,7 @@ def show_dashboard():
             font-size: 1.75rem;
             font-weight: 700;
             margin: 0 0 0.5rem 0;
-        ">🌿 Funding Dashboard</h2>
+        ">Funding Dashboard</h2>
         <p style="
             color: #6B7280;
             font-size: 1rem;
@@ -592,7 +592,7 @@ def show_search():
             font-weight: 700;
             margin: 0 0 0.5rem 0;
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-        ">🔍 Smart Search & Filters</h2>
+        ">Smart Search & Filters</h2>
         <p style="
             color: #6B7280;
             font-size: 1rem;
@@ -791,7 +791,7 @@ def show_analytics():
             font-size: 1.75rem;
             font-weight: 700;
             margin: 0 0 0.5rem 0;
-        ">📈 Analytics & Market Insights</h2>
+        ">Analytics & Market Insights</h2>
         <p style="
             color: #8E8E93;
             font-size: 1rem;
@@ -972,7 +972,7 @@ def show_data_collection():
             font-size: 1.75rem;
             font-weight: 700;
             margin: 0 0 0.5rem 0;
-        ">🔄 Data Collection Center</h2>
+        ">Data Collection Center</h2>
         <p style="
             color: #8E8E93;
             font-size: 1rem;
