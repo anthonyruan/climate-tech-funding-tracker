@@ -6,8 +6,8 @@
     "enabled": true,
     "scraper": "techcrunch",
     "description": "Climate tech news and funding from TechCrunch",
-    "last_scraped": "2025-08-10 02:42:02",
-    "articles_count": 120
+    "last_scraped": "2025-08-11 20:11:54",
+    "articles_count": 190
   },
   "cleantechnica_rss": {
     "name": "CleanTechnica RSS",
@@ -16,8 +16,8 @@
     "enabled": true,
     "scraper": "rss",
     "description": "Clean technology news and analysis",
-    "last_scraped": "2025-08-10 02:42:02",
-    "articles_count": 3
+    "last_scraped": "2025-08-11 20:11:55",
+    "articles_count": 12
   },
   "test_source": {
     "name": "Test Source",
@@ -43,7 +43,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:02",
+    "last_scraped": "2025-08-11 20:11:55",
     "articles_count": 6,
     "custom": true
   },
@@ -61,7 +61,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:03",
+    "last_scraped": "2025-08-11 20:11:55",
     "articles_count": 0,
     "custom": true
   },
@@ -79,7 +79,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:04",
+    "last_scraped": "2025-08-11 20:11:56",
     "articles_count": 0,
     "custom": true
   },
@@ -97,7 +97,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:04",
+    "last_scraped": "2025-08-11 20:11:56",
     "articles_count": 0,
     "custom": true
   },
@@ -133,7 +133,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:04",
+    "last_scraped": "2025-08-11 20:11:56",
     "articles_count": 0,
     "custom": true
   },
@@ -151,7 +151,7 @@
       "million",
       "billion"
     ],
-    "last_scraped": "2025-08-10 02:43:04",
+    "last_scraped": "2025-08-11 20:11:57",
     "articles_count": 0,
     "custom": true
   }
